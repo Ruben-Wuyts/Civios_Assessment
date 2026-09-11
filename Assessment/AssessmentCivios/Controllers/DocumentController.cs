@@ -9,9 +9,11 @@ namespace Assessment.Presentation.Controllers
     public class DocumentController : ControllerBase
     {
         private readonly IDocumentService _documentService;
-        public DocumentController(IDocumentService documentService) 
+        private readonly IFileUploadValidator _uploadValidator;
+        public DocumentController(IDocumentService documentService, IFileUploadValidator uploadValidator) 
         { 
             _documentService = documentService;
+            _uploadValidator = uploadValidator;
         }
 
         [HttpPost("analyze")]
@@ -19,8 +21,12 @@ namespace Assessment.Presentation.Controllers
         {
             try
             {
+                _uploadValidator.FileNotEmpty(file.Length);
+                _uploadValidator.FileExtensionAllowed(file.Name);
+
                 using var stream = file.OpenReadStream();
                 var text = await _documentService.ExtractText(stream);
+
                 return Ok(text);
             }
             catch (Exception ex) 
