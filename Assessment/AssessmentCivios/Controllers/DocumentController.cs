@@ -1,6 +1,7 @@
 ﻿using Assessment.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Assessment.Presentation.Controllers
 {
@@ -21,8 +22,13 @@ namespace Assessment.Presentation.Controllers
         {
             try
             {
-                _uploadValidator.FileNotEmpty(file.Length);
-                _uploadValidator.FileExtensionAllowed(file.Name);
+                
+                var validationResult = _uploadValidator.ValidateFile(file.FileName, file.Length);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.ErrorMessage);
+                }
 
                 using var stream = file.OpenReadStream();
                 var text = await _documentService.ExtractText(stream);

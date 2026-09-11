@@ -1,5 +1,6 @@
 using Assessment.Application.Services;
 using Assessment.Core.Interfaces;
+using Assessment.Core.Validators;
 using Assessment.Infrastructure.TextExtractors;
 
 
@@ -11,6 +12,7 @@ builder.Services.AddControllers();
 // Dependency Injection
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IDocumentTextExtractor, PdfTextExtractor>();
+builder.Services.AddScoped<IFileUploadValidator, FileUploadValidator>();
 
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();

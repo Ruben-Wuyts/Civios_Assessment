@@ -1,56 +1,58 @@
 ﻿using Assessment.Core.Interfaces;
 using Assessment.Core.Results;
-using Microsoft.AspNetCore.Http;
 
 namespace Assessment.Core.Validators
 {
     public class FileUploadValidator : IFileUploadValidator
     {
-        FileValidationResult validationResult { get; set; }
+        private const long MaxFileSize = 10 * 1024 * 1024;
 
         public FileValidationResult ValidateFile(string fileName, long fileSize)
         {
-            validationResult = FileExtensionAllowed(fileName);
-            validationResult = FileNotEmpty(fileSize);
-            validationResult = FileSizeAllowed(fileSize);
-            return validationResult;
+            var result = FileIsPresent(fileSize);
+
+            if (!result.IsValid)
+                return result;
+
+            result = FileExtensionAllowed(fileName);
+
+            if (!result.IsValid)
+                return result;
+
+            result = FileSizeAllowed(fileSize);
+
+            if (!result.IsValid)
+                return result;
+
+            return FileValidationResult.Success();
         }
 
-        private FileValidationResult FileExtensionAllowed(string fileName)
+        private static FileValidationResult FileExtensionAllowed(string fileName)
         {
-            string extension = fileName.Substring(fileName.Length - 3);
-            if (!string.IsNullOrWhiteSpace(extension) && extension == "pdf") 
+            string extension = Path.GetExtension(fileName);
+            if (!string.IsNullOrWhiteSpace(extension) && extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
             {
-                return validationResult;
-            }
-            else
-            {
-                return validationResult;
-            }
+                return FileValidationResult.Success();
+            } 
+            return FileValidationResult.Fail("Extension is not allowed.");
         }
 
-        private FileValidationResult FileNotEmpty(long fileSize)
+        private static FileValidationResult FileIsPresent(long fileSize)
         {
-            if (fileSize > 0)
+            if (fileSize <= 0)
             {
-                return validationResult;
+                return FileValidationResult.Fail("You must upload a file.");
             }
-            else
-            {
-                return validationResult;
-            }
+            return FileValidationResult.Success();
         }
 
-        private FileValidationResult FileSizeAllowed(long fileSize)
+        private static FileValidationResult FileSizeAllowed(long fileSize)
         {
-            if (fileSize > 100)
+            if (fileSize <= MaxFileSize)
             {
-                return validationResult;
+                return FileValidationResult.Success();
             }
-            else 
-            { 
-                return validationResult; 
-            }
+            return FileValidationResult.Fail("File size is too large.");
         }
     }
 }
