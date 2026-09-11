@@ -15,7 +15,7 @@ namespace Assessment.Application.Services
             _textExtractor = textExtractor;
         }
 
-        public Task<String> ExtractText(FileStream stream)
+        public Task<String> ExtractText(Stream stream)
         {
             string text = _textExtractor.ExtractText(stream);
 

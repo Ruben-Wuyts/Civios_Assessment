@@ -8,6 +8,6 @@ namespace Assessment.Core.Interfaces
 {
     public interface IDocumentTextExtractor
     {
-        string ExtractText(FileStream stream);
+        string ExtractText(Stream stream);
     }
 }

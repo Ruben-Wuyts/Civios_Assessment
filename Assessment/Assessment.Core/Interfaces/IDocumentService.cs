@@ -8,6 +8,6 @@ namespace Assessment.Core.Interfaces
 {
     public interface IDocumentService
     {
-        public Task<String> ExtractText(FileStream stream);
+        public Task<String> ExtractText(Stream stream);
     }
 }

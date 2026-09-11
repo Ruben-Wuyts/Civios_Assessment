@@ -14,16 +14,18 @@ namespace Assessment.Presentation.Controllers
             _documentService = documentService;
         }
 
-        [HttpGet]
-        public async Task<String> GetDocumentClassification(FileStream stream)
+        [HttpPost("analyze")]
+        public async Task<ActionResult<string>> AnalyzeDocument(IFormFile file)
         {
             try
             {
-                return await _documentService.ExtractText(stream);
+                using var stream = file.OpenReadStream();
+                var text = await _documentService.ExtractText(stream);
+                return Ok(text);
             }
             catch (Exception ex) 
             { 
-                return ex.Message;
+                return StatusCode(500, ex.Message);
             }
         }
     }
