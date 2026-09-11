@@ -9,12 +9,8 @@ namespace Assessment.Core.Validators
 
         public FileValidationResult ValidateFile(string fileName, long fileSize)
         {
-            var result = FileIsPresent(fileSize);
 
-            if (!result.IsValid)
-                return result;
-
-            result = FileExtensionAllowed(fileName);
+            var result = FileExtensionAllowed(fileName);
 
             if (!result.IsValid)
                 return result;
@@ -35,15 +31,6 @@ namespace Assessment.Core.Validators
                 return FileValidationResult.Success();
             } 
             return FileValidationResult.Fail("Extension is not allowed.");
-        }
-
-        private static FileValidationResult FileIsPresent(long fileSize)
-        {
-            if (fileSize <= 0)
-            {
-                return FileValidationResult.Fail("You must upload a file.");
-            }
-            return FileValidationResult.Success();
         }
 
         private static FileValidationResult FileSizeAllowed(long fileSize)
