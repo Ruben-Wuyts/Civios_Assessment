@@ -7,7 +7,7 @@ namespace Assessment.Infrastructure.TextExtractors
     public class PdfTextExtractor: IDocumentTextExtractor
     {
 
-        public string ExtractText(FileStream stream)
+        public string ExtractText(Stream stream)
         {
            
             using var document = PdfDocument.Open(stream);
