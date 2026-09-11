@@ -1,7 +1,6 @@
 ﻿using Assessment.Core.Interfaces;
 using System.Text;
 using UglyToad.PdfPig;
-using UglyToad.PdfPig.Content;
 
 namespace Assessment.Infrastructure.TextExtractors
 {
@@ -10,14 +9,13 @@ namespace Assessment.Infrastructure.TextExtractors
 
         public string ExtractText(Stream stream)
         {
-           
+            
             using var document = PdfDocument.Open(stream);
 
             var text = new StringBuilder();
 
             foreach (var page in document.GetPages())
             {
-                text.AppendLine($"--- PAGE {page.Number} ---");
                 text.AppendLine(page.Text);
                 text.AppendLine();
             }

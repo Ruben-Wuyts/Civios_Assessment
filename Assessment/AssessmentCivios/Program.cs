@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IDocumentTextExtractor, PdfTextExtractor>();
 builder.Services.AddScoped<IFileUploadValidator, FileUploadValidator>();
+builder.Services.AddScoped<IExtractedTextValidator, ExtractedTextValidator>();
 
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();

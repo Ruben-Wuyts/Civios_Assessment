@@ -1,7 +1,5 @@
 ﻿using Assessment.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Assessment.Presentation.Controllers
 {
@@ -22,7 +20,7 @@ namespace Assessment.Presentation.Controllers
         {
             try
             {
-                
+
                 var validationResult = _uploadValidator.ValidateFile(file.FileName, file.Length);
 
                 if (!validationResult.IsValid)
