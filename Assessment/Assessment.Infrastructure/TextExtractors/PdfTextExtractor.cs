@@ -6,7 +6,6 @@ namespace Assessment.Infrastructure.TextExtractors
 {
     public class PdfTextExtractor: IDocumentTextExtractor
     {
-
         public string ExtractText(Stream stream)
         {
             
@@ -19,8 +18,8 @@ namespace Assessment.Infrastructure.TextExtractors
                 text.AppendLine(page.Text);
                 text.AppendLine();
             }
-
             return text.ToString();
+            
         }
     }
 }

@@ -31,7 +31,12 @@ namespace Assessment.Presentation.Controllers
                 using var stream = file.OpenReadStream();
                 var text = await _documentService.ExtractText(stream);
 
-                return Ok(text);
+                if (!text.IsValid)
+                {
+                    return BadRequest(text.ErrorMessage);
+                }
+
+                return Ok(text.ExtractedText);
             }
             catch (Exception ex) 
             { 
