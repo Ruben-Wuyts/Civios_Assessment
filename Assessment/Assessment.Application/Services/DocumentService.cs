@@ -6,10 +6,12 @@ namespace Assessment.Application.Services
     {
         private readonly IDocumentTextExtractor _textExtractor;
         private readonly IExtractedTextValidator _textValidator;
-        public DocumentService(IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator)
+        private readonly IDocumentClassifier _classifier;
+        public DocumentService(IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator, IDocumentClassifier classifier)
         {
             _textExtractor = textExtractor;
             _textValidator = textValidator;
+            _classifier = classifier;
         }
 
         public Task<ExtractedTextResult> ExtractText(Stream stream)
@@ -17,6 +19,11 @@ namespace Assessment.Application.Services
             string text = _textExtractor.ExtractText(stream);
             return Task.FromResult(_textValidator.IsTextValid(text));
             
+        }
+
+        public Task<DataClassificationResult> Classify(string text) 
+        {
+            return Task.FromResult(_classifier.AssignClassification(text));
         }
 
     }
