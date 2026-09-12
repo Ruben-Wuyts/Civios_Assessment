@@ -6,20 +6,20 @@ namespace Assessment.Infrastructure.TextExtractors
 {
     public class PdfTextExtractor: IDocumentTextExtractor
     {
-
-        public string ExtractText(FileStream stream)
+        public string ExtractText(Stream stream)
         {
-           
+            
             using var document = PdfDocument.Open(stream);
 
             var text = new StringBuilder();
 
-            foreach (var pag in document.GetPages())
+            foreach (var page in document.GetPages())
             {
-                text.AppendLine(pag.Text);
+                text.AppendLine(page.Text);
+                text.AppendLine();
             }
-
             return text.ToString();
+            
         }
     }
 }

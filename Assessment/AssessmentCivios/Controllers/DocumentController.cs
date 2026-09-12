@@ -1,5 +1,4 @@
 ﻿using Assessment.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assessment.Presentation.Controllers
@@ -9,21 +8,39 @@ namespace Assessment.Presentation.Controllers
     public class DocumentController : ControllerBase
     {
         private readonly IDocumentService _documentService;
-        public DocumentController(IDocumentService documentService) 
+        private readonly IFileUploadValidator _uploadValidator;
+        public DocumentController(IDocumentService documentService, IFileUploadValidator uploadValidator) 
         { 
             _documentService = documentService;
+            _uploadValidator = uploadValidator;
         }
 
-        [HttpGet]
-        public async Task<String> GetDocumentClassification(FileStream stream)
+        [HttpPost("analyze")]
+        public async Task<ActionResult<string>> AnalyzeDocument(IFormFile file)
         {
             try
             {
-                return await _documentService.ExtractText(stream);
+
+                var validationResult = _uploadValidator.ValidateFile(file.FileName, file.Length);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.ErrorMessage);
+                }
+
+                using var stream = file.OpenReadStream();
+                var text = await _documentService.ExtractText(stream);
+
+                if (!text.IsValid)
+                {
+                    return BadRequest(text.ErrorMessage);
+                }
+
+                return Ok(text.ExtractedText);
             }
             catch (Exception ex) 
             { 
-                return ex.Message;
+                return StatusCode(500, ex.Message);
             }
         }
     }

@@ -1,25 +1,22 @@
 ﻿using Assessment.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Assessment.Core.Results;
 namespace Assessment.Application.Services
 {
     public class DocumentService: IDocumentService
     {
         private readonly IDocumentTextExtractor _textExtractor;
-        public DocumentService(IDocumentTextExtractor textExtractor) 
-        { 
+        private readonly IExtractedTextValidator _textValidator;
+        public DocumentService(IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator)
+        {
             _textExtractor = textExtractor;
+            _textValidator = textValidator;
         }
 
-        public Task<String> ExtractText(FileStream stream)
+        public Task<ExtractedTextResult> ExtractText(Stream stream)
         {
             string text = _textExtractor.ExtractText(stream);
-
-            return Task.FromResult(text);
+            return Task.FromResult(_textValidator.IsTextValid(text));
+            
         }
 
     }

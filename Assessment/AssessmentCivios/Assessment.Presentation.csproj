@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Assessment.Application\Assessment.Application.csproj" />
     <ProjectReference Include="..\Assessment.Core\Assessment.Core.csproj" />
+    <ProjectReference Include="..\Assessment.Infrastructure\Assessment.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
