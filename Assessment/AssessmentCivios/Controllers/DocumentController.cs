@@ -1,4 +1,5 @@
 ﻿using Assessment.Core.Interfaces;
+using Assessment.Core.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assessment.Presentation.Controllers
@@ -9,6 +10,7 @@ namespace Assessment.Presentation.Controllers
     {
         private readonly IDocumentService _documentService;
         private readonly IFileUploadValidator _uploadValidator;
+
         public DocumentController(IDocumentService documentService, IFileUploadValidator uploadValidator) 
         { 
             _documentService = documentService;
@@ -16,7 +18,7 @@ namespace Assessment.Presentation.Controllers
         }
 
         [HttpPost("analyze")]
-        public async Task<ActionResult<string>> AnalyzeDocument(IFormFile file)
+        public async Task<ActionResult<DataClassificationResult>> AnalyzeDocument(IFormFile file)
         {
             try
             {
@@ -36,7 +38,9 @@ namespace Assessment.Presentation.Controllers
                     return BadRequest(text.ErrorMessage);
                 }
 
-                return Ok(text.ExtractedText);
+                var result = await _documentService.Classify(text.ExtractedText);
+
+                return Ok(result);
             }
             catch (Exception ex) 
             { 

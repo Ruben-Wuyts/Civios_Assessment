@@ -5,5 +5,6 @@ namespace Assessment.Core.Interfaces
     public interface IDocumentService
     {
         public Task<ExtractedTextResult> ExtractText(Stream stream);
+        public Task<DataClassificationResult> Classify(string text);
     }
 }
