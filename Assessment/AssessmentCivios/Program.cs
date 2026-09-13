@@ -1,6 +1,7 @@
 using Assessment.Application.Services;
 using Assessment.Core.Components;
 using Assessment.Core.Interfaces;
+using Assessment.Core.Policies;
 using Assessment.Core.Validators;
 using Assessment.Infrastructure.DatabaseContext;
 using Assessment.Infrastructure.Repositories;
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IDocumentClassifier, Classifier>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 builder.Services.AddScoped<IDocumentStorage, LocalDocumentStorage>();
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+builder.Services.AddScoped<IDocumentPolicy, DocumentPolicy>();
 
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
