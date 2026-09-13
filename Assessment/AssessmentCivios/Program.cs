@@ -31,6 +31,7 @@ builder.Services.AddScoped<IExtractedTextValidator, ExtractedTextValidator>();
 builder.Services.AddScoped<IDocumentClassifier, Classifier>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 builder.Services.AddScoped<IDocumentStorage, LocalDocumentStorage>();
+builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();

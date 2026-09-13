@@ -11,14 +11,16 @@ namespace Assessment.Application.Services
         private readonly IDocumentClassifier _classifier;
         private readonly IDocumentStorage _documentStorage;
         private readonly IDocumentRepository _documentRepository;
+        private readonly IAuditLogRepository _auditLogRepository;
 
-        public DocumentService(IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator, IDocumentClassifier classifier, IDocumentStorage documentStorage, IDocumentRepository documentRepository)
+        public DocumentService(IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator, IDocumentClassifier classifier, IDocumentStorage documentStorage, IDocumentRepository documentRepository, IAuditLogRepository auditLogRepository)
         {
             _textExtractor = textExtractor;
             _textValidator = textValidator;
             _classifier = classifier;
             _documentStorage = documentStorage;
             _documentRepository = documentRepository;
+            _auditLogRepository = auditLogRepository;
         }
 
         public Task<ExtractedTextResult> ExtractText(Stream stream)
@@ -42,6 +44,16 @@ namespace Assessment.Application.Services
             document.StoragePath = temporaryPath;
 
             var savedDocument = await _documentRepository.AddAsync(document);
+
+            var auditLog = new AuditLog
+            {
+                DocumentId = savedDocument.Id,
+                Action = AuditAction.Analyzed,
+                Timestamp = DateTime.UtcNow,
+                Details = $"Classified as {classificationResult.Classification}. {classificationResult.Reason}"
+            };
+
+            await _auditLogRepository.AddAsync(auditLog);
 
             return new DocumentAnalysisResult
             {
@@ -76,8 +88,22 @@ namespace Assessment.Application.Services
 
             await _documentRepository.UpdateAsync(foundDocument);
 
+            var auditLog = new AuditLog
+            {
+                DocumentId = foundDocument.Id,
+                Action = AuditAction.Stored,
+                Timestamp = DateTime.UtcNow,
+                Details = $"Stored in {foundDocument.Classification} storage."
+            };
+
+            await _auditLogRepository.AddAsync(auditLog);
 
             return DocumentStoreResult.Success(foundDocument);
+        }
+
+        public async Task<List<AuditLog>> GetAllAuditLogsByDocumentIdAsync(int documentId)
+        {
+            return await _auditLogRepository.GetByDocumentIdAsync(documentId);
         }
 
     }

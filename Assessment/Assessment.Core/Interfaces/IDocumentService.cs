@@ -9,5 +9,6 @@ namespace Assessment.Core.Interfaces
         public Task<DataClassificationResult> Classify(string text, DocumentMetadata documentMetadata);
         public Task<DocumentAnalysisResult> SaveAnalyzedDocumentAsync(Stream stream, string fileName, DocumentMetadata metadata, DataClassificationResult classificationResult);
         public Task<DocumentStoreResult> StoreDocumentAsync(int id);
+        public Task<List<AuditLog>> GetAllAuditLogsByDocumentIdAsync(int documentId);
     }
 }
