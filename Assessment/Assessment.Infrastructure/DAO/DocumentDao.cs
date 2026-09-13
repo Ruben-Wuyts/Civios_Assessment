@@ -1,8 +1,9 @@
-﻿using Assessment.Core.Enums;
+﻿using Assessment.Core.Entities;
+using Assessment.Core.Enums;
 
-namespace Assessment.Core.Entities
+namespace Assessment.Infrastructure.DAO
 {
-    public class Document
+    public class DocumentDao
     {
         public int Id { get; set; }
         public string FileName { get; set; } = string.Empty;
@@ -11,13 +12,14 @@ namespace Assessment.Core.Entities
         public string ClassificationReason { get; set; } = string.Empty;
         public DocumentMetadata Metadata { get; set; } = null!;
         public DocumentStatus Status { get; set; } = DocumentStatus.Analyzed;
+        public string Errormessage { get; set; } = string.Empty;
 
-        private Document()
+        private DocumentDao()
         {
             //EF core
         }
 
-        public Document(DataClassification classification, string fileName, string classificationReason, DocumentMetadata metaData)
+        public DocumentDao(DataClassification classification, string fileName, string classificationReason, DocumentMetadata metaData)
         {
             Classification = classification;
             FileName = fileName;
@@ -25,7 +27,7 @@ namespace Assessment.Core.Entities
             Metadata = metaData;
         }
 
-        public Document(string fileName, DataClassification classification, string classificationReason, DocumentMetadata metadata)
+        public DocumentDao(string fileName, DataClassification classification, string classificationReason, DocumentMetadata metadata)
         {
             FileName = fileName;
             Classification = classification;
@@ -33,5 +35,7 @@ namespace Assessment.Core.Entities
             Metadata = metadata;
         }
 
+        
     }
 }
+

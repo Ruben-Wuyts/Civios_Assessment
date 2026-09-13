@@ -4,6 +4,7 @@ using Assessment.Core.Interfaces;
 using Assessment.Core.Validators;
 using Assessment.Infrastructure.DatabaseContext;
 using Assessment.Infrastructure.Repositories;
+using Assessment.Infrastructure.Storage;
 using Assessment.Infrastructure.TextExtractors;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IFileUploadValidator, FileUploadValidator>();
 builder.Services.AddScoped<IExtractedTextValidator, ExtractedTextValidator>();
 builder.Services.AddScoped<IDocumentClassifier, Classifier>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<IDocumentStorage, LocalDocumentStorage>();
 
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();

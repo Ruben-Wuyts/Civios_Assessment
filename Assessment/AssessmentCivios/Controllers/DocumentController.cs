@@ -13,15 +13,15 @@ namespace Assessment.Presentation.Controllers
         private readonly IDocumentService _documentService;
         private readonly IFileUploadValidator _uploadValidator;
 
-        public DocumentController(IDocumentService documentService, IFileUploadValidator uploadValidator) 
-        { 
+        public DocumentController(IDocumentService documentService, IFileUploadValidator uploadValidator)
+        {
             _documentService = documentService;
             _uploadValidator = uploadValidator;
         }
 
         [HttpPost("analyze")]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<DataClassificationResult>> AnalyzeDocument([FromForm] AnalyzeDocumentRequest request)
+        public async Task<ActionResult<DocumentAnalysisResult>> AnalyzeDocument([FromForm] AnalyzeDocumentRequest request)
         {
             try
             {
@@ -44,12 +44,15 @@ namespace Assessment.Presentation.Controllers
 
                 var result = await _documentService.Classify(text.ExtractedText, metadata);
 
-                return Ok(result);
+                var analysisResult = await _documentService.SaveAnalyzedDocumentAsync(stream, request.File.FileName, metadata, result);
+
+                return Ok(analysisResult);
             }
-            catch (Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 return StatusCode(500, ex.Message);
             }
         }
+          
     }
 }
