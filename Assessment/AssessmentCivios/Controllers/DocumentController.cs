@@ -66,6 +66,12 @@ namespace Assessment.Presentation.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("{id}/audit")]
+        public async Task<ActionResult<List<AuditLog>>> GetAllAuditLogsForDocument(int id)
+        {
+            return await _documentService.GetAllAuditLogsByDocumentIdAsync(id);
+        }
           
     }
 }
