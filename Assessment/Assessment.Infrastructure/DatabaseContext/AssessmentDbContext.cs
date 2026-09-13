@@ -3,16 +3,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Assessment.Infrastructure.DatabaseContext
 {
-    public class DatabaseContext: DbContext
+    public class AssessmentDbContext: DbContext
     {
-        public virtual DbSet<Document> Documents { get; set; }
+        public DbSet<Document> Documents { get; set; } = null!;
 
-        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
+        public AssessmentDbContext(DbContextOptions<AssessmentDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Document>()
                 .OwnsOne(document => document.Metadata);
         }

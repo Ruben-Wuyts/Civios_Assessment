@@ -10,6 +10,11 @@ namespace Assessment.Core.Entities
         public string Description { get; set; }
         public IntendedVisibility? IntendedVisibility { get; set; }
 
+        private DocumentMetadata() 
+        { 
+            //EF Core
+        }
+
         public DocumentMetadata(string author, string title, DateTime creationDate, string description, IntendedVisibility intendedVisibility)
         {
              Author = author;
