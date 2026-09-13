@@ -11,6 +11,8 @@ namespace Assessment.Core.Entities
         public string ClassificationReason { get; set; } = string.Empty;
         public DocumentMetadata Metadata { get; set; } = null!;
         public DocumentStatus Status { get; set; } = DocumentStatus.Analyzed;
+        public AccessLevel AccessLevel { get; set; }
+        public DateTime RetentionUntil { get; set; }
 
         private Document()
         {

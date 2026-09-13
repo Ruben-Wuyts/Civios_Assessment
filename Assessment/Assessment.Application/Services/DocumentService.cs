@@ -12,8 +12,11 @@ namespace Assessment.Application.Services
         private readonly IDocumentStorage _documentStorage;
         private readonly IDocumentRepository _documentRepository;
         private readonly IAuditLogRepository _auditLogRepository;
+        private readonly IDocumentPolicy _policy;
 
-        public DocumentService(IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator, IDocumentClassifier classifier, IDocumentStorage documentStorage, IDocumentRepository documentRepository, IAuditLogRepository auditLogRepository)
+        public DocumentService
+            (IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator, IDocumentClassifier classifier, 
+            IDocumentStorage documentStorage, IDocumentRepository documentRepository, IAuditLogRepository auditLogRepository, IDocumentPolicy policy)
         {
             _textExtractor = textExtractor;
             _textValidator = textValidator;
@@ -21,6 +24,7 @@ namespace Assessment.Application.Services
             _documentStorage = documentStorage;
             _documentRepository = documentRepository;
             _auditLogRepository = auditLogRepository;
+            _policy = policy;
         }
 
         public Task<ExtractedTextResult> ExtractText(Stream stream)
