@@ -5,19 +5,32 @@ namespace Assessment.Core.Entities
     public class Document
     {
         public int Id { get; set; }
-        public string FileName { get; set; }
-        public string StoragePath { get; set; }
+        public string FileName { get; set; } = string.Empty;
+        public string? StoragePath { get; set; }
         public DataClassification Classification { get; set; }
-        public string ClassificationReason { get; set; }
-        public DocumentMetadata Metadata { get; set; }
+        public string ClassificationReason { get; set; } = string.Empty;
+        public DocumentMetadata Metadata { get; set; } = null!;
+        public DocumentStatus Status { get; set; } = DocumentStatus.Analyzed;
 
-        public Document(string storagePath, DataClassification classification, string fileName, string classificationReason, DocumentMetaData metaData)
+        private Document()
         {
-            StoragePath = storagePath;
+            //EF core
+        }
+
+        public Document(DataClassification classification, string fileName, string classificationReason, DocumentMetadata metaData)
+        {
             Classification = classification;
             FileName = fileName;
             ClassificationReason = classificationReason;
             Metadata = metaData;
+        }
+
+        public Document(string fileName, DataClassification classification, string classificationReason, DocumentMetadata metadata)
+        {
+            FileName = fileName;
+            Classification = classification;
+            ClassificationReason = classificationReason;
+            Metadata = metadata;
         }
 
     }

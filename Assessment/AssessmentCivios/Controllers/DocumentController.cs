@@ -1,5 +1,7 @@
-﻿using Assessment.Core.Interfaces;
+﻿using Assessment.Core.Entities;
+using Assessment.Core.Interfaces;
 using Assessment.Core.Results;
+using Assessment.Presentation.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assessment.Presentation.Controllers
@@ -11,26 +13,28 @@ namespace Assessment.Presentation.Controllers
         private readonly IDocumentService _documentService;
         private readonly IFileUploadValidator _uploadValidator;
 
-        public DocumentController(IDocumentService documentService, IFileUploadValidator uploadValidator) 
-        { 
+        public DocumentController(IDocumentService documentService, IFileUploadValidator uploadValidator)
+        {
             _documentService = documentService;
             _uploadValidator = uploadValidator;
         }
 
         [HttpPost("analyze")]
-        public async Task<ActionResult<DataClassificationResult>> AnalyzeDocument(IFormFile file)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<DocumentAnalysisResult>> AnalyzeDocument([FromForm] AnalyzeDocumentRequest request)
         {
             try
             {
 
-                var validationResult = _uploadValidator.ValidateFile(file.FileName, file.Length);
+                var metadata = new DocumentMetadata(request.Author, request.Title, request.CreationDate, request.Description, request.Visibility);
+                var validationResult = _uploadValidator.ValidateFile(request.File.FileName, request.File.Length);
 
                 if (!validationResult.IsValid)
                 {
                     return BadRequest(validationResult.ErrorMessage);
                 }
 
-                using var stream = file.OpenReadStream();
+                using var stream = request.File.OpenReadStream();
                 var text = await _documentService.ExtractText(stream);
 
                 if (!text.IsValid)
@@ -38,14 +42,30 @@ namespace Assessment.Presentation.Controllers
                     return BadRequest(text.ErrorMessage);
                 }
 
-                var result = await _documentService.Classify(text.ExtractedText);
+                var result = await _documentService.Classify(text.ExtractedText, metadata);
 
-                return Ok(result);
+                var analysisResult = await _documentService.SaveAnalyzedDocumentAsync(stream, request.File.FileName, metadata, result);
+
+                return Ok(analysisResult);
             }
-            catch (Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("{id}/store")]
+        public async Task<ActionResult<DocumentStoreResult>> StoreDocument(int id)
+        {
+            var result = await _documentService.StoreDocumentAsync(id);
+
+            if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result);
+        }
+          
     }
 }

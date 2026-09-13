@@ -1,4 +1,6 @@
-﻿using Assessment.Core.Interfaces;
+﻿using Assessment.Core.Entities;
+using Assessment.Core.Enums;
+using Assessment.Core.Interfaces;
 using Assessment.Core.Results;
 namespace Assessment.Application.Services
 {
@@ -7,11 +9,16 @@ namespace Assessment.Application.Services
         private readonly IDocumentTextExtractor _textExtractor;
         private readonly IExtractedTextValidator _textValidator;
         private readonly IDocumentClassifier _classifier;
-        public DocumentService(IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator, IDocumentClassifier classifier)
+        private readonly IDocumentStorage _documentStorage;
+        private readonly IDocumentRepository _documentRepository;
+
+        public DocumentService(IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator, IDocumentClassifier classifier, IDocumentStorage documentStorage, IDocumentRepository documentRepository)
         {
             _textExtractor = textExtractor;
             _textValidator = textValidator;
             _classifier = classifier;
+            _documentStorage = documentStorage;
+            _documentRepository = documentRepository;
         }
 
         public Task<ExtractedTextResult> ExtractText(Stream stream)
@@ -21,9 +28,56 @@ namespace Assessment.Application.Services
             
         }
 
-        public Task<DataClassificationResult> Classify(string text) 
+        public Task<DataClassificationResult> Classify(string text, DocumentMetadata documentMetadata) 
         {
-            return Task.FromResult(_classifier.AssignClassification(text));
+            return Task.FromResult(_classifier.AssignClassification(text, documentMetadata));
+        }
+
+        public async Task<DocumentAnalysisResult> SaveAnalyzedDocumentAsync(Stream stream, string fileName, DocumentMetadata metadata, DataClassificationResult classificationResult)
+        {
+            var temporaryPath = await _documentStorage.SaveTemporaryAsync(stream, fileName);
+
+            var document = new Document(fileName, classificationResult.Classification, classificationResult.Reason, metadata);
+
+            document.StoragePath = temporaryPath;
+
+            var savedDocument = await _documentRepository.AddAsync(document);
+
+            return new DocumentAnalysisResult
+            {
+                DocumentId = savedDocument.Id,
+                ClassificationResult = classificationResult,
+                Status = savedDocument.Status,
+            };
+        }
+
+        public async Task<DocumentStoreResult> StoreDocumentAsync(int id)
+        {
+            var foundDocument = await _documentRepository.GetByIdAsync(id);
+            if (foundDocument is null)
+            {
+                return DocumentStoreResult.Fail("No document found with given id");
+            }
+            if (foundDocument.Status != DocumentStatus.Analyzed)
+            {
+                return DocumentStoreResult.Fail(
+                    "Document is not ready to be stored.");
+            }
+            if (string.IsNullOrWhiteSpace(foundDocument.StoragePath))
+            {
+                return DocumentStoreResult.Fail(
+                    "Document has no temporary storage path.");
+            }
+
+            var finalPath = await _documentStorage.MoveToFinalStorageAsync(foundDocument.StoragePath, foundDocument.Classification);
+
+            foundDocument.StoragePath = finalPath;
+            foundDocument.Status = DocumentStatus.Stored;
+
+            await _documentRepository.UpdateAsync(foundDocument);
+
+
+            return DocumentStoreResult.Success(foundDocument);
         }
 
     }
