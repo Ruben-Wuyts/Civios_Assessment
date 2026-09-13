@@ -43,9 +43,13 @@ namespace Assessment.Application.Services
         {
             var temporaryPath = await _documentStorage.SaveTemporaryAsync(stream, fileName);
 
+            var policyResult = _policy.DeterminePolicy(classificationResult.Classification, DateTime.UtcNow);
+
             var document = new Document(fileName, classificationResult.Classification, classificationResult.Reason, metadata);
 
             document.StoragePath = temporaryPath;
+            document.AccessLevel = policyResult.AccessLevel;
+            document.RetentionUntil = policyResult.RetentionUntil;
 
             var savedDocument = await _documentRepository.AddAsync(document);
 
