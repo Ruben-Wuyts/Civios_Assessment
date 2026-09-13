@@ -2,7 +2,9 @@ using Assessment.Application.Services;
 using Assessment.Core.Components;
 using Assessment.Core.Interfaces;
 using Assessment.Core.Validators;
+using Assessment.Infrastructure.DatabaseContext;
 using Assessment.Infrastructure.TextExtractors;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 
@@ -13,6 +15,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+
+//Database Context
+builder.Services.AddDbContext<DatabaseContext>(options => 
+    options.UseSqlite(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Dependency Injection
 builder.Services.AddScoped<IDocumentService, DocumentService>();
