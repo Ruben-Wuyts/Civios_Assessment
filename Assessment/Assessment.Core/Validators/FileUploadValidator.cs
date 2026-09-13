@@ -29,7 +29,7 @@ namespace Assessment.Core.Validators
             if (!string.IsNullOrWhiteSpace(extension) && extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
             {
                 return FileValidationResult.Success();
-            } 
+            }
             return FileValidationResult.Fail("Extension is not allowed.");
         }
 

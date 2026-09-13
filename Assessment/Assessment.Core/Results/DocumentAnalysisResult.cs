@@ -6,6 +6,6 @@ namespace Assessment.Core.Results
     {
         public int DocumentId { get; init; }
         public DataClassificationResult ClassificationResult { get; init; } = null!;
-        public DocumentStatus Status {  get; init; }
+        public DocumentStatus Status { get; init; }
     }
 }

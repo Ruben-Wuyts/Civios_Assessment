@@ -19,14 +19,6 @@ namespace Assessment.Core.Entities
             //EF core
         }
 
-        public Document(DataClassification classification, string fileName, string classificationReason, DocumentMetadata metaData)
-        {
-            Classification = classification;
-            FileName = fileName;
-            ClassificationReason = classificationReason;
-            Metadata = metaData;
-        }
-
         public Document(string fileName, DataClassification classification, string classificationReason, DocumentMetadata metadata)
         {
             FileName = fileName;

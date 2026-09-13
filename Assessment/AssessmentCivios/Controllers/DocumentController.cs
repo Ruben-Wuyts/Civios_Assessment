@@ -1,4 +1,5 @@
 ﻿using Assessment.Core.Entities;
+using Assessment.Core.Enums;
 using Assessment.Core.Interfaces;
 using Assessment.Core.Results;
 using Assessment.Presentation.Requests;
@@ -12,11 +13,13 @@ namespace Assessment.Presentation.Controllers
     {
         private readonly IDocumentService _documentService;
         private readonly IFileUploadValidator _uploadValidator;
+        private readonly ILogger<DocumentController> _logger;
 
-        public DocumentController(IDocumentService documentService, IFileUploadValidator uploadValidator)
+        public DocumentController(IDocumentService documentService, IFileUploadValidator uploadValidator, ILogger<DocumentController> logger)
         {
             _documentService = documentService;
             _uploadValidator = uploadValidator;
+            _logger = logger;
         }
 
         [HttpPost("analyze")]
@@ -50,7 +53,9 @@ namespace Assessment.Presentation.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                _logger.LogError(ex, "Unexpected error while analyzing document.");
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred while processing the document.");
             }
         }
 
@@ -59,7 +64,12 @@ namespace Assessment.Presentation.Controllers
         {
             var result = await _documentService.StoreDocumentAsync(id);
 
-            if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
+            if (result.Error == DocumentStoreError.NotFound)
+            {
+                return NotFound(result.ErrorMessage);
+            }
+
+            if (result.Error is not null)
             {
                 return BadRequest(result.ErrorMessage);
             }
@@ -72,6 +82,6 @@ namespace Assessment.Presentation.Controllers
         {
             return await _documentService.GetAllAuditLogsByDocumentIdAsync(id);
         }
-          
+
     }
 }

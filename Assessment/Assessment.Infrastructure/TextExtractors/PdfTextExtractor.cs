@@ -4,11 +4,11 @@ using UglyToad.PdfPig;
 
 namespace Assessment.Infrastructure.TextExtractors
 {
-    public class PdfTextExtractor: IDocumentTextExtractor
+    public class PdfTextExtractor : IDocumentTextExtractor
     {
         public string ExtractText(Stream stream)
         {
-            
+
             using var document = PdfDocument.Open(stream);
 
             var text = new StringBuilder();
@@ -19,7 +19,7 @@ namespace Assessment.Infrastructure.TextExtractors
                 text.AppendLine();
             }
             return text.ToString();
-            
+
         }
     }
 }

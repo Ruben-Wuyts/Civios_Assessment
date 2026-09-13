@@ -1,13 +1,8 @@
 ﻿using Assessment.Core.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assessment.Core.Components
 {
-    public class KeywordDictionary: Dictionary<DataClassification, List<string>>
+    public class KeywordDictionary : Dictionary<DataClassification, List<string>>
     {
         public static KeywordDictionary CreateDictionary()
         {

@@ -4,7 +4,7 @@ using Assessment.Core.Results;
 
 namespace Assessment.Core.Policies
 {
-    public class DocumentPolicy: IDocumentPolicy
+    public class DocumentPolicy : IDocumentPolicy
     {
         public DocumentPolicyResult DeterminePolicy(
             DataClassification classification,
@@ -39,7 +39,7 @@ namespace Assessment.Core.Policies
                 _ => throw new ArgumentOutOfRangeException(
                     nameof(classification),
                     classification,
-                    "Unkown data classification.")
+                    "Unknown data classification.")
             };
         }
     }
