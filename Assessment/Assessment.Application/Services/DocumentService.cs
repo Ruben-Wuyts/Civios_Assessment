@@ -1,4 +1,5 @@
-﻿using Assessment.Core.Interfaces;
+﻿using Assessment.Core.Entities;
+using Assessment.Core.Interfaces;
 using Assessment.Core.Results;
 namespace Assessment.Application.Services
 {
@@ -21,9 +22,9 @@ namespace Assessment.Application.Services
             
         }
 
-        public Task<DataClassificationResult> Classify(string text) 
+        public Task<DataClassificationResult> Classify(string text, DocumentMetadata documentMetadata) 
         {
-            return Task.FromResult(_classifier.AssignClassification(text));
+            return Task.FromResult(_classifier.AssignClassification(text, documentMetadata));
         }
 
     }

@@ -6,12 +6,12 @@ namespace Assessment.Core.Entities
     {
         public int Id { get; set; }
         public string FileName { get; set; }
-        public string StoragePath { get; set; }
+        public string? StoragePath { get; set; }
         public DataClassification Classification { get; set; }
         public string ClassificationReason { get; set; }
-        public DocumentMetadata Metadata { get; set; }
+        public DocumentMetadata? Metadata { get; set; }
 
-        public Document(string storagePath, DataClassification classification, string fileName, string classificationReason, DocumentMetaData metaData)
+        public Document(string storagePath, DataClassification classification, string fileName, string classificationReason, DocumentMetadata metaData)
         {
             StoragePath = storagePath;
             Classification = classification;

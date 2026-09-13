@@ -3,12 +3,16 @@ using Assessment.Core.Components;
 using Assessment.Core.Interfaces;
 using Assessment.Core.Validators;
 using Assessment.Infrastructure.TextExtractors;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Controllers
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 // Dependency Injection
 builder.Services.AddScoped<IDocumentService, DocumentService>();
