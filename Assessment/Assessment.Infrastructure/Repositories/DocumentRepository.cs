@@ -1,7 +1,5 @@
 ﻿using Assessment.Core.Entities;
 using Assessment.Core.Interfaces;
-using Assessment.Core.Results;
-using Assessment.Infrastructure.DAO;
 using Assessment.Infrastructure.DatabaseContext;
 
 
@@ -24,16 +22,18 @@ namespace Assessment.Infrastructure.Repositories
             return document;
         }
 
-        public async Task<DocumentByIdResult> GetByIdAsync(int id)
+        public async Task<Document?> GetByIdAsync(int id)
         {
             Document document = await _context.Documents.FindAsync(id);
 
-            if (document == null)
-            {
-                return new DocumentByIdResult("No document found with given Id.");
-            }
-            return new DocumentByIdResult(document);
+            return document;
 
+        }
+
+        public async Task UpdateAsync(Document document)
+        {
+            _context.Documents.Update(document);
+            await _context.SaveChangesAsync();
         }
     }
 }

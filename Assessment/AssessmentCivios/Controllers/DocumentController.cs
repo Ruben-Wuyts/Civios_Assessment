@@ -53,6 +53,19 @@ namespace Assessment.Presentation.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("{id}/store")]
+        public async Task<ActionResult<DocumentStoreResult>> StoreDocument(int id)
+        {
+            var result = await _documentService.StoreDocumentAsync(id);
+
+            if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
+            return Ok(result);
+        }
           
     }
 }

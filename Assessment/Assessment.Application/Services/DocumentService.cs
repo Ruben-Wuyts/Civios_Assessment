@@ -1,4 +1,5 @@
 ﻿using Assessment.Core.Entities;
+using Assessment.Core.Enums;
 using Assessment.Core.Interfaces;
 using Assessment.Core.Results;
 namespace Assessment.Application.Services
@@ -48,6 +49,35 @@ namespace Assessment.Application.Services
                 ClassificationResult = classificationResult,
                 Status = savedDocument.Status,
             };
+        }
+
+        public async Task<DocumentStoreResult> StoreDocumentAsync(int id)
+        {
+            var foundDocument = await _documentRepository.GetByIdAsync(id);
+            if (foundDocument is null)
+            {
+                return DocumentStoreResult.Fail("No document found with given id");
+            }
+            if (foundDocument.Status != DocumentStatus.Analyzed)
+            {
+                return DocumentStoreResult.Fail(
+                    "Document is not ready to be stored.");
+            }
+            if (string.IsNullOrWhiteSpace(foundDocument.StoragePath))
+            {
+                return DocumentStoreResult.Fail(
+                    "Document has no temporary storage path.");
+            }
+
+            var finalPath = await _documentStorage.MoveToFinalStorageAsync(foundDocument.StoragePath, foundDocument.Classification);
+
+            foundDocument.StoragePath = finalPath;
+            foundDocument.Status = DocumentStatus.Stored;
+
+            await _documentRepository.UpdateAsync(foundDocument);
+
+
+            return DocumentStoreResult.Success(foundDocument);
         }
 
     }

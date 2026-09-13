@@ -6,6 +6,7 @@ namespace Assessment.Core.Interfaces
     public interface IDocumentRepository
     {
         Task<Document> AddAsync(Document document);
-        Task<DocumentByIdResult> GetByIdAsync(int id);
+        Task<Document?> GetByIdAsync(int id);
+        Task UpdateAsync(Document document);
     }
 }
