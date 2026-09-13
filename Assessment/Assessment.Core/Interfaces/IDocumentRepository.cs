@@ -1,5 +1,4 @@
 ﻿using Assessment.Core.Entities;
-using Assessment.Core.Results;
 
 namespace Assessment.Core.Interfaces
 {

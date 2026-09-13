@@ -20,7 +20,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 //Database Context
-builder.Services.AddDbContext<AssessmentDbContext>(options => 
+builder.Services.AddDbContext<AssessmentDbContext>(options =>
     options.UseSqlite(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Assessment.Infrastructure.DatabaseContext
 {
-    public class AssessmentDbContext: DbContext
+    public class AssessmentDbContext : DbContext
     {
         public DbSet<Document> Documents { get; set; } = null!;
         public DbSet<AuditLog> AuditLogs { get; set; } = null!;

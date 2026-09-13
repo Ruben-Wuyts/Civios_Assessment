@@ -4,7 +4,7 @@ using Assessment.Core.Interfaces;
 using Assessment.Core.Results;
 namespace Assessment.Application.Services
 {
-    public class DocumentService: IDocumentService
+    public class DocumentService : IDocumentService
     {
         private readonly IDocumentTextExtractor _textExtractor;
         private readonly IExtractedTextValidator _textValidator;
@@ -15,7 +15,7 @@ namespace Assessment.Application.Services
         private readonly IDocumentPolicy _policy;
 
         public DocumentService
-            (IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator, IDocumentClassifier classifier, 
+            (IDocumentTextExtractor textExtractor, IExtractedTextValidator textValidator, IDocumentClassifier classifier,
             IDocumentStorage documentStorage, IDocumentRepository documentRepository, IAuditLogRepository auditLogRepository, IDocumentPolicy policy)
         {
             _textExtractor = textExtractor;
@@ -31,10 +31,10 @@ namespace Assessment.Application.Services
         {
             string text = _textExtractor.ExtractText(stream);
             return Task.FromResult(_textValidator.IsTextValid(text));
-            
+
         }
 
-        public Task<DataClassificationResult> Classify(string text, DocumentMetadata documentMetadata) 
+        public Task<DataClassificationResult> Classify(string text, DocumentMetadata documentMetadata)
         {
             return Task.FromResult(_classifier.AssignClassification(text, documentMetadata));
         }
@@ -45,11 +45,12 @@ namespace Assessment.Application.Services
 
             var policyResult = _policy.DeterminePolicy(classificationResult.Classification, DateTime.UtcNow);
 
-            var document = new Document(fileName, classificationResult.Classification, classificationResult.Reason, metadata);
-
-            document.StoragePath = temporaryPath;
-            document.AccessLevel = policyResult.AccessLevel;
-            document.RetentionUntil = policyResult.RetentionUntil;
+            var document = new Document(fileName, classificationResult.Classification, classificationResult.Reason, metadata)
+            {
+                StoragePath = temporaryPath,
+                AccessLevel = policyResult.AccessLevel,
+                RetentionUntil = policyResult.RetentionUntil
+            };
 
             var savedDocument = await _documentRepository.AddAsync(document);
 
@@ -76,17 +77,15 @@ namespace Assessment.Application.Services
             var foundDocument = await _documentRepository.GetByIdAsync(id);
             if (foundDocument is null)
             {
-                return DocumentStoreResult.Fail("No document found with given id");
+                return DocumentStoreResult.Fail("No document found with given id", DocumentStoreError.NotFound);
             }
             if (foundDocument.Status != DocumentStatus.Analyzed)
             {
-                return DocumentStoreResult.Fail(
-                    "Document is not ready to be stored.");
+                return DocumentStoreResult.Fail("Document is not ready to be stored.", DocumentStoreError.InvalidStatus);
             }
             if (string.IsNullOrWhiteSpace(foundDocument.StoragePath))
             {
-                return DocumentStoreResult.Fail(
-                    "Document has no temporary storage path.");
+                return DocumentStoreResult.Fail("Document has no temporary storage path.", DocumentStoreError.MissingStoragePath);
             }
 
             var finalPath = await _documentStorage.MoveToFinalStorageAsync(foundDocument.StoragePath, foundDocument.Classification);

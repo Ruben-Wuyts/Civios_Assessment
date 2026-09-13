@@ -52,21 +52,21 @@ namespace Assessment.Infrastructure.Storage
                 "LocalFiles",
                 folderName);
 
-            Directory.CreateDirectory($"{targetDirectory}");
+            Directory.CreateDirectory(targetDirectory);
 
             var fileName = Path.GetFileName(currentPath);
 
             if (!File.Exists(currentPath))
             {
-                throw new ArgumentException("The document could not be found in temporary storage.", currentPath);
+                throw new FileNotFoundException("The document could not be found in temporary storage.", currentPath);
             }
             var finalPath = Path.Combine(targetDirectory, fileName);
 
-            File.Move(currentPath, finalPath );
+            File.Move(currentPath, finalPath);
 
             return Task.FromResult(finalPath);
 
-            
+
         }
 
     }

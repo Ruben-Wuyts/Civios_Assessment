@@ -5,7 +5,7 @@ using Assessment.Infrastructure.DatabaseContext;
 
 namespace Assessment.Infrastructure.Repositories
 {
-    public class DocumentRepository: IDocumentRepository
+    public class DocumentRepository : IDocumentRepository
     {
         private readonly AssessmentDbContext _context;
 
@@ -24,9 +24,7 @@ namespace Assessment.Infrastructure.Repositories
 
         public async Task<Document?> GetByIdAsync(int id)
         {
-            Document document = await _context.Documents.FindAsync(id);
-
-            return document;
+            return await _context.Documents.FindAsync(id);
 
         }
 

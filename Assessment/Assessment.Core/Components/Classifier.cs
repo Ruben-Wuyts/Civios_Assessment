@@ -10,7 +10,7 @@ namespace Assessment.Core.Components
         public DataClassificationResult AssignClassification(string text, DocumentMetadata metadata)
         {
             var keywords = KeywordDictionary.CreateDictionary();
-            
+
             var priority = new[]
             {
                 DataClassification.SensitivePersonalData,
@@ -25,9 +25,9 @@ namespace Assessment.Core.Components
 
             foreach (var classification in priority)
             {
-                foreach (var keyword in keywords[classification]) 
-                { 
-                    if(textToClassify.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                foreach (var keyword in keywords[classification])
+                {
+                    if (textToClassify.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                     {
                         textClassification = classification;
                         detectedKeyword = keyword;
@@ -35,7 +35,7 @@ namespace Assessment.Core.Components
                     }
                 }
 
-                if (textClassification.HasValue) 
+                if (textClassification.HasValue)
                 {
                     break;
                 }
@@ -45,7 +45,7 @@ namespace Assessment.Core.Components
             if (metadata.IntendedVisibility == IntendedVisibility.Internal && (textClassification == null || textClassification == DataClassification.PublicData))
             {
                 return new DataClassificationResult(
-                    DataClassification.InternalData, 
+                    DataClassification.InternalData,
                     "Document metadata indicates internal visibility.");
             }
 
@@ -59,7 +59,7 @@ namespace Assessment.Core.Components
 
             return new DataClassificationResult
                 (
-                DataClassification.PublicData, 
+                DataClassification.PublicData,
                 "No classification keywords detected"
                 );
         }
